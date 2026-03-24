@@ -1,0 +1,3 @@
+cd gps-multi
+npm install
+npm start
