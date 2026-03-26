@@ -64,7 +64,7 @@
     #map {
       width: 100%;           /* full width of its parent */
       max-width: 900px;      /* cap at 900px on wide screens */
-      height: 50vh;          /* 50% of the browser window height */
+      height: 70vh;          /* 70% of the browser window height */
       border-radius: 12px;   /* rounded corners */
       border: 1px solid var(--border);
       overflow: hidden;      /* clips map tiles to rounded corners */
@@ -160,7 +160,7 @@
     /* ── Responsive: on small screens reduce padding ── */
     @media (max-width: 600px) {
       body    { padding: 1rem 0.75rem; }
-      #map    { height: 50vh; border-radius: 8px; }
+      #map    { height: 70vh; border-radius: 8px; }
     }
   </style>
 </head>
@@ -185,23 +185,31 @@
 
     // Six trackers: each has an IMEI and a display number (1–6)
     const TRACKERS = [
-      { imei: '894758493847414', number: 1 },
-      { imei: '894758493847392', number: 2 },
-      { imei: '894758493847434', number: 3 },
-      { imei: '894758493847406', number: 4 },
-      { imei: '894758493847427', number: 5 },
-      { imei: '894758493847428', number: 6 },
+      { imei: '864520060389261', number: 1 },
+      { imei: '864520060386127', number: 2 },
+      { imei: '864520060387620', number: 3 },
+      { imei: '864520060387562', number: 4 },
+      { imei: '864520060387638', number: 5 },
+      { imei: '864520060385673', number: 6 },
     ]
+
+    //     const TRACKERS = [
+    //   { imei: '894758493847404', number: 1 },
+    //   { imei: '894758493847418', number: 2 },
+    //   { imei: '894758493847501', number: 3 },
+    //   { imei: '894758493847437', number: 4 },
+    //   { imei: '894758493847432', number: 5 },
+    //   { imei: '894758493847392', number: 6 },
+    // ]
 
     // ─────────────────────────────────────────────
     // MAP SETUP
     // ─────────────────────────────────────────────
 
-    // Create the Leaflet map, centered roughly on Vietnam where demo devices are
-    // setView([lat, lng], zoomLevel)
+    // Create the Leaflet map, centered roughly on Delft
     const map = L.map('map', {
-      center: [16, 106],   // center of Vietnam
-      zoom: 6,
+      center: [52.01236, 4.36018],
+      zoom: 13,
       zoomControl: true
     })
 
