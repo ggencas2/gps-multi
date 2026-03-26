@@ -173,10 +173,10 @@
   <div id="map"></div>
 
   <!-- Status bar: shows last update time and a refresh button -->
-  <!-- <div id="status">
+  <div id="status">
     <span id="lastUpdate">Loading...</span>
     <button id="refreshBtn">↺ Refresh</button>
-  </div> -->
+  </div>
 
   <script>
     // ─────────────────────────────────────────────
@@ -256,8 +256,8 @@
     // ─────────────────────────────────────────────
     async function fetchAllTrackers() {
       // Disable the refresh button while loading
-      // document.getElementById('refreshBtn').disabled = true
-      // document.getElementById('lastUpdate').textContent = 'Updating...'
+      document.getElementById('refreshBtn').disabled = true
+      document.getElementById('lastUpdate').textContent = 'Updating...'
 
       // Fire off all 6 API requests at the same time (parallel, not sequential)
       // Each request goes to our backend at /api/device?imei=...
@@ -313,11 +313,11 @@
       }
 
       // Update the status bar with current time
-      // document.getElementById('lastUpdate').textContent =
-      //   `Last updated: ${new Date().toLocaleTimeString()}`
+      document.getElementById('lastUpdate').textContent =
+        `Last updated: ${new Date().toLocaleTimeString()}`
 
-      // Re-enable the refresh button
-      // document.getElementById('refreshBtn').disabled = false
+      Re-enable the refresh button
+      document.getElementById('refreshBtn').disabled = false
     }
 
     // ─────────────────────────────────────────────
@@ -325,8 +325,8 @@
     // ─────────────────────────────────────────────
 
     // Refresh button click → fetch fresh data
-    // document.getElementById('refreshBtn')
-    //   .addEventListener('click', fetchAllTrackers)
+    document.getElementById('refreshBtn')
+      .addEventListener('click', fetchAllTrackers)
 
     // ─────────────────────────────────────────────
     // INIT
