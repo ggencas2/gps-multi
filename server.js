@@ -120,6 +120,11 @@ app.get('/api/device', async function(req, res) {
 // Listens on port 3000
 // Visit http://localhost:3000 to see the app
 // ─────────────────────────────────────────────
-app.listen(3000, () => {
-  console.log('🚀 Server running at http://localhost:3000')
+// app.listen(3000, () => {
+//   console.log('🚀 Server running at http://localhost:3000')
+// })
+
+const PORT = process.env.PORT || 3000
+app.listen(PORT, () => {
+  console.log(`🚀 Server running on port ${PORT}`)
 })
