@@ -5,7 +5,7 @@
 //   2. Fetches device data for a given IMEI
 //   3. Serves the frontend (public/index.html)
 // ─────────────────────────────────────────────
-
+import 'dotenv/config'
 // express  → web server framework
 // cors     → allows the browser to call our API
 // crypto   → built-in Node.js module for hashing (MD5)
@@ -30,8 +30,12 @@ app.use(express.static('public'))
 // These identify your account with the GPS platform
 // ─────────────────────────────────────────────
 
-const APPID  = "GPS-DEMO"
-const SECRET = "VC88$yXwUcGN^^F5a8B%NUNBaGzg&dyW"
+// const APPID  = "GPS-DEMO"
+// const SECRET = "VC88$yXwUcGN^^F5a8B%NUNBaGzg&dyW"
+
+const APPID    = process.env.APPID
+const SECRET   = process.env.SECRET
+const BASE_URL = process.env.BASE_URL
 
 // ─────────────────────────────────────────────
 // MD5 HELPER
@@ -55,7 +59,7 @@ async function getToken() {
   // Double MD5: first hash the secret, then hash that + time
   const signature = md5(md5(SECRET) + time)
 
-  const response = await fetch("https://open.iopgps.com/api/auth", {
+  const response = await fetch(`${BASE_URL}/api/auth`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ appid: APPID, time, signature })
@@ -75,42 +79,49 @@ async function getToken() {
 //   3. Returns the device data to the frontend
 // ─────────────────────────────────────────────
 app.get('/api/device', async function(req, res) {
-  // Read the IMEI from the query string: /api/device?imei=...
   const imei = req.query.imei
 
-  // Validate — IMEI is required
   if (!imei) {
     return res.status(400).json({ error: 'imei query parameter is required' })
   }
 
   try {
-    // Step 1 — authenticate and get a fresh access token
-    const { accessToken } = await getToken()
+    // Log before auth
+    console.log("Attempting auth...")
+    const authData = await getToken()
+    console.log("Auth response:", JSON.stringify(authData))
 
-    // Step 2 — fetch the device detail from IOPGPS
-    // The token goes in the AccessToken header (not Authorization)
+    const { accessToken } = authData
+
+    if (!accessToken) {
+      return res.status(500).json({ error: 'No access token', authData })
+    }
+
+    // Log before device fetch
+    console.log(`Fetching IMEI ${imei} with token ${accessToken}`)
+
     const deviceResponse = await fetch(
-      `https://open.iopgps.com/api/device/detail?imei=${imei}`,
+      `${BASE_URL}/api/device/detail?imei=${imei}`,
       {
         method: "GET",
         headers: { "AccessToken": accessToken }
       }
     )
 
-    // Read raw text first (safer than .json() when response might be empty)
+    console.log("Device status:", deviceResponse.status)
     const rawText = await deviceResponse.text()
+    console.log("Raw response:", rawText)
 
-    // Guard against empty responses
     if (!rawText) {
-      return res.status(502).json({ error: 'Empty response from IOPGPS' })
+      return res.status(502).json({ error: "Empty response from IOPGPS" })
     }
 
-    // Parse and forward the JSON response to the frontend
     res.json(JSON.parse(rawText))
 
   } catch (err) {
-    // Log the error on the server and return a 500 to the frontend
-    console.error(`Error fetching IMEI ${imei}:`, err.message)
+    // Print full error including stack trace
+    console.error(`Full error for IMEI ${imei}:`)
+    console.error(err)
     res.status(500).json({ error: err.message })
   }
 })
@@ -120,11 +131,11 @@ app.get('/api/device', async function(req, res) {
 // Listens on port 3000
 // Visit http://localhost:3000 to see the app
 // ─────────────────────────────────────────────
-// app.listen(3000, () => {
-//   console.log('🚀 Server running at http://localhost:3000')
-// })
-
-const PORT = process.env.PORT || 3000
-app.listen(PORT, () => {
-  console.log(`🚀 Server running on port ${PORT}`)
+app.listen(3000, () => {
+  console.log('🚀 Server running at http://localhost:3000')
 })
+
+// const PORT = process.env.PORT || 3000
+// app.listen(PORT, () => {
+//   console.log(`🚀 Server running on port ${PORT}`)
+// })
