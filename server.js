@@ -29,11 +29,9 @@ app.use(express.static('public'))
 // IOPGPS CREDENTIALS
 // These identify your account with the GPS platform
 // ─────────────────────────────────────────────
-const APPID  = "Doeldelfland"
-const SECRET = "jz6l9k8twhmzxfejq9bum0vylqb6e2hn"
 
-// const APPID  = "GPS-DEMO2"
-// const SECRET = "VC88$yXwUcGN^^F5a8B%NUNBaGzg&dyW"
+const APPID  = "GPS-DEMO2"
+const SECRET = "VC88$yXwUcGN^^F5a8B%NUNBaGzg&dyW"
 
 // ─────────────────────────────────────────────
 // MD5 HELPER
