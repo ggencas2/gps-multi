@@ -2,51 +2,42 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <!-- Makes the page responsive on mobile devices -->
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>GPS Trackers</title>
 
-  <!-- Leaflet CSS - styles the map and its controls -->
+  <!-- Leaflet CSS -->
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
 
-  <!-- Leaflet JS - the map library itself -->
+  <!-- Leaflet JS -->
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
-  <!-- Google Font - clean and modern -->
+  <!-- Google Font -->
   <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet" />
 
   <style>
-    /* ── CSS Variables: central place to manage all colors and fonts ── */
     :root {
-      --bg:       #f7f6f3;       /* warm off-white page background */
-      --surface:  #ffffff;       /* white card surfaces */
-      --border:   #e5e2dc;       /* subtle warm border color */
-      --text:     #1a1916;       /* near-black primary text */
-      --muted:    #9b9690;       /* grey secondary text */
-      --mono:     'DM Mono', monospace;
-      --sans:     'DM Sans', sans-serif;
+      --bg:      #f7f6f3;
+      --surface: #ffffff;
+      --border:  #e5e2dc;
+      --text:    #1a1916;
+      --muted:   #9b9690;
+      --mono:    'DM Mono', monospace;
+      --sans:    'DM Sans', sans-serif;
     }
 
-    /* ── Reset: remove default browser margin/padding ── */
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
 
-    /* ── Body: full viewport height, warm background, chosen font ── */
     body {
       background: var(--bg);
       color: var(--text);
       font-family: var(--sans);
-      min-height: 70vh;
+      min-height: 100vh;
       display: flex;
       flex-direction: column;
-      align-items: center;   /* centers content horizontally */
-      padding: 2rem 1rem;    /* breathing room on all sides */
+      align-items: center;
+      padding: 2rem 1rem;
     }
 
-    /* ── Page heading ── */
     h1 {
       font-family: var(--mono);
       font-size: 13px;
@@ -55,25 +46,22 @@
       text-transform: uppercase;
       color: var(--muted);
       margin-bottom: 1.25rem;
-      align-self: flex-start;  /* left-align within the centered column */
+      align-self: flex-start;
       max-width: 900px;
       width: 100%;
     }
 
-    /* ── Map container: exactly 70% of the viewport height ── */
+    /* Map: exactly 50% of viewport height */
     #map {
-      width: 100%;           /* full width of its parent */
-      max-width: 900px;      /* cap at 900px on wide screens */
-      height: 70vh;          /* 70% of the browser window height */
-      border-radius: 12px;   /* rounded corners */
+      width: 100%;
+      max-width: 900px;
+      height: 50vh;
+      border-radius: 12px;
       border: 1px solid var(--border);
-      overflow: hidden;      /* clips map tiles to rounded corners */
-
-      /* subtle shadow to lift the map off the page */
+      overflow: hidden;
       box-shadow: 0 2px 24px rgba(0,0,0,0.07);
     }
 
-    /* ── Status bar below the map ── */
     #status {
       max-width: 900px;
       width: 100%;
@@ -82,11 +70,10 @@
       font-size: 11px;
       color: var(--muted);
       display: flex;
-      justify-content: space-between;  /* pushes left and right text apart */
+      justify-content: space-between;
       align-items: center;
     }
 
-    /* ── Refresh button ── */
     #refreshBtn {
       font-family: var(--mono);
       font-size: 11px;
@@ -102,21 +89,19 @@
     #refreshBtn:hover    { background: var(--border); }
     #refreshBtn:disabled { opacity: 0.4; cursor: not-allowed; }
 
-    /* ── Each circle marker: a numbered div rendered by Leaflet ── */
+    /* Numbered circle markers */
     .circle-marker {
       width: 32px;
       height: 32px;
-      border-radius: 50%;           /* makes the div a circle */
+      border-radius: 50%;
       display: flex;
-      align-items: center;          /* vertically centers the number */
-      justify-content: center;      /* horizontally centers the number */
+      align-items: center;
+      justify-content: center;
       font-family: var(--mono);
       font-size: 13px;
       font-weight: 500;
       color: #fff;
       border: 2.5px solid rgba(255,255,255,0.6);
-
-      /* subtle ring animation to draw attention to each tracker */
       box-shadow: 0 0 0 4px rgba(255,255,255,0.15);
       transition: transform 0.2s;
       cursor: pointer;
@@ -124,15 +109,13 @@
 
     .circle-marker:hover { transform: scale(1.15); }
 
-    /* ── Six distinct colors, one per tracker ── */
-    .color-1 { background: #e05c5c; }  /* red    */
-    .color-2 { background: #e08c3a; }  /* orange */
-    .color-3 { background: #4a9e6b; }  /* green  */
-    .color-4 { background: #4a7fc1; }  /* blue   */
-    .color-5 { background: #8b5fc1; }  /* purple */
-    .color-6 { background: #c15f8b; }  /* pink   */
+    .color-1 { background: #e05c5c; }
+    .color-2 { background: #e08c3a; }
+    .color-3 { background: #4a9e6b; }
+    .color-4 { background: #4a7fc1; }
+    .color-5 { background: #8b5fc1; }
+    .color-6 { background: #c15f8b; }
 
-    /* ── Popup style overrides for Leaflet ── */
     .leaflet-popup-content-wrapper {
       border-radius: 8px;
       box-shadow: 0 4px 20px rgba(0,0,0,0.12);
@@ -140,10 +123,7 @@
       font-size: 13px;
     }
 
-    .leaflet-popup-content {
-      margin: 10px 14px;
-      line-height: 1.6;
-    }
+    .leaflet-popup-content { margin: 10px 14px; line-height: 1.6; }
 
     .popup-title {
       font-family: var(--mono);
@@ -152,144 +132,92 @@
       margin-bottom: 4px;
     }
 
-    .popup-detail {
-      font-size: 12px;
-      color: #666;
-    }
+    .popup-detail { font-size: 12px; color: #666; }
 
-    /* ── Responsive: on small screens reduce padding ── */
     @media (max-width: 600px) {
-      body    { padding: 1rem 0.75rem; }
-      #map    { height: 70vh; border-radius: 8px; }
+      body { padding: 1rem 0.75rem; }
+      #map { height: 50vh; border-radius: 8px; }
     }
   </style>
 </head>
 <body>
 
-  <!-- Page title -->
-  <!-- <h1>Live Tracker — 6 Devices</h1> -->
-
-  <!-- The map div — Leaflet will inject tiles and markers into this -->
+  <h1>Live Tracker — 6 Demo Devices</h1>
   <div id="map"></div>
-
-  <!-- Status bar: shows last update time and a refresh button -->
   <div id="status">
     <span id="lastUpdate">Loading...</span>
     <button id="refreshBtn">↺ Refresh</button>
   </div>
 
   <script>
-    // ─────────────────────────────────────────────
-    // CONFIG
-    // ─────────────────────────────────────────────
-
-    // Six trackers: each has an IMEI and a display number (1–6)
-
-        const TRACKERS = [
+    // ── 6 demo trackers ──
+    const TRACKERS = [
       { imei: '894758493847414', number: 1 },
-      { imei: '894758493847407', number: 2 },
-      { imei: '894758493847432', number: 3 },
-      { imei: '894758493847412', number: 4 },
-      { imei: '894758493847501', number: 5 },
-      { imei: '894758493847437', number: 6 },
+      { imei: '894758493847392', number: 2 },
+      { imei: '894758493847434', number: 3 },
+      { imei: '894758493847406', number: 4 },
+      { imei: '894758493847427', number: 5 },
+      { imei: '894758493847428', number: 6 },
     ]
 
-    // ─────────────────────────────────────────────
-    // MAP SETUP
-    // ─────────────────────────────────────────────
+    // ── Map setup — centered on Vietnam where demo devices are ──
+    const map = L.map('map', { center: [16, 106], zoom: 6 })
 
-    // Create the Leaflet map, centered roughly on Delft
-    const map = L.map('map', {
-      center: [52.01236, 4.36018],
-      zoom: 13,
-      zoomControl: true
-    })
-
-    // Add OpenStreetMap tiles as the map background
-    // {s} = subdomain, {z} = zoom, {x}/{y} = tile coordinates
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
       attribution: '© <a href="https://openstreetmap.org">OpenStreetMap</a>'
     }).addTo(map)
 
-    // ─────────────────────────────────────────────
-    // MARKER MANAGEMENT
-    // Store markers in a Map (keyed by IMEI) so we can
-    // update their position without re-creating them
-    // ─────────────────────────────────────────────
-    const markers = new Map() // imei → Leaflet marker
+    // Store markers by IMEI for efficient updates
+    const markers = new Map()
 
-    // Creates a custom Leaflet icon using a colored div with a number inside
     function createIcon(number) {
       return L.divIcon({
-        className: '',  // empty — we handle all styling ourselves
+        className: '',
         html: `<div class="circle-marker color-${number}">${number}</div>`,
-        iconSize:   [32, 32],  // total size of the icon in pixels
-        iconAnchor: [16, 16],  // point of the icon that sits on the lat/lng (center)
-        popupAnchor:[0, -18]   // where the popup appears relative to the anchor
+        iconSize:    [32, 32],
+        iconAnchor:  [16, 16],
+        popupAnchor: [0, -18]
       })
     }
 
-    // Places or updates a marker on the map for a given tracker
     function placeMarker(tracker, lat, lng, popupContent) {
       const imei = tracker.imei
-
       if (markers.has(imei)) {
-        // Marker already exists — just move it to the new position
         markers.get(imei).setLatLng([lat, lng])
       } else {
-        // First time — create the marker and add it to the map
-        const marker = L.marker([lat, lng], {
-          icon: createIcon(tracker.number)
-        }).addTo(map)
-
-        // Bind a popup that appears when the marker is clicked
+        const marker = L.marker([lat, lng], { icon: createIcon(tracker.number) }).addTo(map)
         marker.bindPopup(popupContent)
-
-        // Save the marker so we can update it later
         markers.set(imei, marker)
       }
     }
 
-    // ─────────────────────────────────────────────
-    // DATA FETCHING
-    // Fetches all 6 trackers in parallel using Promise.all
-    // ─────────────────────────────────────────────
+    // ── Fetch all 6 trackers in parallel ──
     async function fetchAllTrackers() {
-      // Disable the refresh button while loading
       document.getElementById('refreshBtn').disabled = true
       document.getElementById('lastUpdate').textContent = 'Updating...'
 
-      // Fire off all 6 API requests at the same time (parallel, not sequential)
-      // Each request goes to our backend at /api/device?imei=...
+      // Use relative URL — works on both Railway and localhost
       const requests = TRACKERS.map(tracker =>
         fetch(`/api/device?imei=${tracker.imei}`)
-          .then(res => res.json())           // parse JSON response
-          .then(json => ({ tracker, json })) // keep tracker info alongside response
-          .catch(err => ({ tracker, error: err.message })) // catch per-tracker errors
+          .then(res => res.json())
+          .then(json => ({ tracker, json }))
+          .catch(err => ({ tracker, error: err.message }))
       )
 
-      // Wait for ALL requests to finish (even if some fail)
       const results = await Promise.all(requests)
-
-      // Collect all valid coordinates to auto-fit the map
       const validCoords = []
 
-      // Process each result
       results.forEach(({ tracker, json, error }) => {
         if (error || !json.success) {
-          // This tracker failed — log it but don't crash the whole page
-          console.warn(`Tracker ${tracker.number} (${tracker.imei}): ${error || 'API error'}`)
+          console.warn(`Tracker ${tracker.number}: ${error || 'API error'}`)
           return
         }
 
-        const status  = json.data.deviceStatus   // GPS position and speed data
-        const brief   = json.data.deviceBrief     // device name and type
-        const vehicle = json.data.vehicleBean     // car info
+        const status = json.data.deviceStatus
+        const brief  = json.data.deviceBrief
+        const lat    = parseFloat(status.lat)
+        const lng    = parseFloat(status.lng)
 
-        const lat = parseFloat(status.lat)
-        const lng = parseFloat(status.lng)
-
-        // Build the popup HTML shown when user clicks a marker
         const popupContent = `
           <div class="popup-title">Tracker ${tracker.number} — ${brief?.name || tracker.imei}</div>
           <div class="popup-detail">
@@ -299,43 +227,22 @@
           </div>
         `
 
-        // Place or update the marker on the map
         placeMarker(tracker, lat, lng, popupContent)
-
-        // Collect this coordinate for auto-fitting the map view
         validCoords.push([lat, lng])
       })
 
-      // If we got at least one valid position, fit the map to show all markers
+      // Auto-fit map to show all markers
       if (validCoords.length > 0) {
-        // fitBounds adjusts zoom and center to show all given coordinates
         map.fitBounds(validCoords, { padding: [40, 40] })
       }
 
-      // Update the status bar with current time
       document.getElementById('lastUpdate').textContent =
         `Last updated: ${new Date().toLocaleTimeString()}`
-
-      // Re-enable the refresh button
       document.getElementById('refreshBtn').disabled = false
     }
 
-    // ─────────────────────────────────────────────
-    // EVENT LISTENERS
-    // ─────────────────────────────────────────────
-
-    // Refresh button click → fetch fresh data
-    document.getElementById('refreshBtn')
-      .addEventListener('click', fetchAllTrackers)
-
-    // ─────────────────────────────────────────────
-    // INIT
-    // ─────────────────────────────────────────────
-
-    // Fetch data immediately when the page loads
+    document.getElementById('refreshBtn').addEventListener('click', fetchAllTrackers)
     fetchAllTrackers()
-
-    // Then auto-refresh every 30 seconds
     setInterval(fetchAllTrackers, 30000)
   </script>
 </body>
